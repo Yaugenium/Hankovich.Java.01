@@ -1,9 +1,11 @@
 package Figures3D;
 
+import java.text.DecimalFormat;
+
 public abstract class Shape implements Comparable<Shape> {
     private double volume;
 
-    Shape(double volumeValue) {
+    protected Shape(double volumeValue) {
         volume = volumeValue;
     }
 
@@ -18,6 +20,8 @@ public abstract class Shape implements Comparable<Shape> {
 
     @Override
     public String toString() {
-        return "(" + getClass().getSimpleName() + ", " + getVolume() + ") ";
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        return "(" + getClass().getSimpleName() + ", " + Double.valueOf(df.format(getVolume())) + ") ";
     }
 }

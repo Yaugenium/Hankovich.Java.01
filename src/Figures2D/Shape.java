@@ -3,7 +3,7 @@ package Figures2D;
 public abstract class Shape implements Comparable<Shape> {
     private double square;
 
-    Shape(double volumeValue) {
+    protected Shape(double volumeValue) {
         square = volumeValue;
     }
 

@@ -4,15 +4,26 @@ import java.util.Scanner;
 import Backpack.*;
 import Figures3D.*;
 import Figures2D.*;
+import Converter.*;
+import BackpackGUI.*;
 
 public class Main {
-    public static void main(String[] args){
-        System.out.println("Input a backpack volume ");
+    public static void main(String[] args) {
+/*        System.out.println("Input a backpack volume ");
         Scanner in = new Scanner(System.in);
 
         Backpack backpack = new Backpack(in.nextDouble());
 
-        loop3D:
+        figures3D(in, backpack);
+        figures2D(in, backpack);
+
+        System.out.println(backpack);*/
+
+        BackpackGUI backpackGUI = new BackpackGUI();
+    }
+
+    private static void figures3D (Scanner in, Backpack backpack)
+    {
         while (true) {
             System.out.println("Input a 3D figure number ");
             System.out.println("1) Cube ");
@@ -35,14 +46,18 @@ public class Main {
                         backpack.putFigure(new Cylinder(in.nextDouble(), in.nextDouble()));
                         break;
                     default:
-                        break loop3D;
+                        return;
                 }
             } catch (BackpackFullException ex) {
                 System.out.println(ex.getMessage());
             }
         }
+    }
 
-        loop2D:
+    private static void figures2D (Scanner in, Backpack backpack)
+    {
+        Converter converter = new Converter();
+
         while (true) {
             System.out.println("Input a 2D figure number ");
             System.out.println("1) Square ");
@@ -53,20 +68,18 @@ public class Main {
                 switch (in.nextInt()) {
                     case (1):
                         System.out.println("Input an edge value ");
-                        backpack.putFigure((new Square(in.nextDouble())).castToCube());
+                        backpack.putFigure(converter.cast( new Cube(), new Square(in.nextDouble())));
                         break;
                     case (2):
                         System.out.println("Input a radius value ");
-                        backpack.putFigure((new Circle(in.nextDouble())).castToSphere());
+                        backpack.putFigure(converter.cast( new Sphere(), new Circle(in.nextDouble())));
                         break;
                     default:
-                        break loop2D;
+                        return;
                 }
             } catch (BackpackFullException ex) {
                 System.out.println(ex.getMessage());
             }
         }
-
-        System.out.println(backpack);
     }
 }
