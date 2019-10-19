@@ -5,11 +5,13 @@ import Figures3D.*;
 import Figures3D.Shape;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.*;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -19,6 +21,7 @@ public class BackpackGUI {
 
     private JButton delete;
     private JButton clear;
+    private JTextField backpackVolume;
     private JTextField currentVolume;
     private DefaultListModel model;
     private JList list;
@@ -67,7 +70,9 @@ public class BackpackGUI {
         mainPanel.add(createLabel("Events:"));
         mainPanel.add(createButtonsPanel());
         mainPanel.add(createLabel("Backpack volume:"));
-        mainPanel.add(createTextField(String.valueOf(backpack.getBackpackVolume()), false));
+
+        backpackVolume = (JTextField) mainPanel.add(createTextField(String.valueOf(backpack.getBackpackVolume()), false));
+
         mainPanel.add(createLabel( "Current volume:"));
 
         currentVolume = (JTextField) mainPanel.add(createTextField(String.valueOf(backpack.getCurrentVolume()), false));
@@ -103,11 +108,55 @@ public class BackpackGUI {
         buttonsPanel.add(createButton("Put figure", new ButtonClickListener()));
         buttonsPanel.add(delete);
         buttonsPanel.add(clear);
-        JButton save = (JButton) buttonsPanel.add(createButton("Save backpack", actionEvent -> {}));
-        JButton load = (JButton) buttonsPanel.add(createButton("Load backpack", actionEvent -> {}));
 
-        save.setEnabled(false);
-        load.setEnabled(false);
+        buttonsPanel.add(createButton("Save backpack", actionEvent -> {
+            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+            int returnValue = jfc.showSaveDialog(null);
+
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+
+                try {
+                    FileOutputStream fileOut = new FileOutputStream(selectedFile);
+                    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                    out.writeObject(backpack);
+                    out.close();
+                    fileOut.close();
+                } catch (IOException i) {
+                    i.printStackTrace();
+                }
+            }
+        }));
+
+        buttonsPanel.add(createButton("Load backpack", actionEvent -> {
+            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+            int returnValue = jfc.showOpenDialog(null);
+
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+
+                try {
+                    FileInputStream fileIn = new FileInputStream(selectedFile);
+                    ObjectInputStream in = new ObjectInputStream(fileIn);
+                    backpack = (Backpack) in.readObject();
+                    in.close();
+                    fileIn.close();
+
+                    backpackVolume.setText(String.valueOf(backpack.getBackpackVolume()));
+                    currentVolume.setText(String.valueOf(backpack.getCurrentVolume()));
+                    model.removeAllElements();
+
+                    for (int i = 0; i < backpack.getSize(); ++i) {
+                        model.add(i, backpack.getFigure(i).toString());
+                        clear.setEnabled(true);
+                    }
+                } catch (IOException | ClassNotFoundException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }));
 
         return buttonsPanel;
     }

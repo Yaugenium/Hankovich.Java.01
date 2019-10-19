@@ -1,5 +1,6 @@
 package Main;
 
+import java.io.*;
 import java.util.Scanner;
 import Backpack.*;
 import Figures3D.*;
@@ -9,7 +10,7 @@ import BackpackGUI.*;
 
 public class Main {
     public static void main(String[] args) {
-/*        System.out.println("Input a backpack volume ");
+        /*System.out.println("Input a backpack volume ");
         Scanner in = new Scanner(System.in);
 
         Backpack backpack = new Backpack(in.nextDouble());
@@ -17,7 +18,39 @@ public class Main {
         figures3D(in, backpack);
         figures2D(in, backpack);
 
-        System.out.println(backpack);*/
+        System.out.println(backpack);
+
+        try
+        {
+            FileOutputStream fileOut = new FileOutputStream("Backpack.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(backpack);
+            out.close();
+            fileOut.close();
+        }
+        catch (IOException i)
+        {
+            i.printStackTrace();
+        }*/
+
+        /*try
+        {
+            FileInputStream fileIn = new FileInputStream("Backpack.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Backpack backpack = (Backpack) in.readObject();
+            in.close();
+            fileIn.close();
+
+            System.out.println(backpack);
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            cnfe.printStackTrace();
+        }*/
 
         BackpackGUI backpackGUI = new BackpackGUI();
     }

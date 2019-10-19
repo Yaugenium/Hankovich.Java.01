@@ -2,13 +2,25 @@ package Backpack;
 
 import Figures3D.Shape;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Backpack {
+public class Backpack implements Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+
     private double backpackVolume;
     private double currentVolume;
     private ArrayList<Shape> figures;
+
+    public Backpack() {
+        backpackVolume = 100;
+        currentVolume = 0;
+        figures = new ArrayList<>();
+    }
 
     public Backpack(double bpVolumeValue) {
         backpackVolume = bpVolumeValue;
@@ -58,6 +70,14 @@ public class Backpack {
         return currentVolume;
     }
 
+    public int getSize() {
+        return figures.size();
+    }
+
+    public Shape getFigure(int index) {
+        return figures.get(index);
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -68,5 +88,18 @@ public class Backpack {
         }
 
         return stringBuilder.toString();
+    }
+
+    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+        backpackVolume = aInputStream.readDouble();
+        currentVolume = aInputStream.readDouble();
+        figures = (ArrayList) aInputStream.readObject();
+    }
+
+    private void writeObject(ObjectOutputStream aOutputStream) throws IOException
+    {
+        aOutputStream.writeDouble(backpackVolume);
+        aOutputStream.writeDouble(currentVolume);
+        aOutputStream.writeObject(figures);
     }
 }
